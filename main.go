@@ -1,12 +1,24 @@
 package main
 
 import (
-	"fmt"
+	"html/template"
 	"net/http"
 )
 
+type View struct {
+	Title          string
+	SelectFileType string
+	SelectLfCode   string
+	DataView       string
+}
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, WebDataEditor4Go!!")
+	v := &View{Title: "CSV/TSV形式編集ツール（Web版）", SelectFileType: "", SelectLfCode: "", DataView: ""}
+	t := template.Must(template.ParseFiles("templete/index.html"))
+	err := t.Execute(w, v)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
