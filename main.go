@@ -14,7 +14,7 @@ type View struct {
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	v := &View{Title: "CSV/TSV形式編集ツール（Web版）", SelectFileType: "", SelectLfCode: "", DataView: ""}
-	t := template.Must(template.ParseFiles("templete/index.html"))
+	t := template.Must(template.ParseFiles("template/index.html"))
 	err := t.Execute(w, v)
 	if err != nil {
 		panic(err)
