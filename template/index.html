@@ -12,8 +12,8 @@
 <h1>{{.Title}}</h1>
 <h2>編集対象のCSV/TSVファイルを読み込んでください</h2>
 <form action="/" method="post" enctype="multipart/form-data">
-ファイル形式：{{.SelectFileType}}<br>
-改行コード：{{.SelectLfCode}}<br>
+ファイル形式：{{select .SelectFileType}}<br>
+改行コード：{{select .SelectLfCode}}<br>
 <input type="file" name="uploadFile" onchange="document.forms[0].submit()">
 <input type="submit" name="download" value="保存">
 {{.DataView}}
