@@ -34,14 +34,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	selectFileType := new(WCDHtmlSelect)
-	selectFileType.Options = map[string]string{"csv": "CSV", "tsv": "TSV"}
-	selectFileType.Selected = "csv"
-
-	selectLfCode := new(WCDHtmlSelect)
-	selectLfCode.Options = map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}
-	selectLfCode.Selected = "lf"
-
+	selectFileType := &WCDHtmlSelect{Options: map[string]string{"csv": "CSV", "tsv": "TSV"}, Selected: "csv"}
+	selectLfCode := &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: "lf"}
 	v := &WCDView{Title: "CSV/TSV形式編集ツール（Web版）", SelectFileType: selectFileType, SelectLfCode: selectLfCode, DataView: ""}
 	t := template.Must(template.New(v.Title).Funcs(funcMap).ParseFiles("template/index.html"))
 	err := t.ExecuteTemplate(w, "base", v)
