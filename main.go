@@ -18,25 +18,28 @@ type WCDView struct {
 	DataView       string
 }
 
+func getSelectTemplateHtml(sel *WCDHtmlSelect) template.HTML {
+	html := ""
+	for value, name := range sel.Options {
+		var selected string
+		if value == sel.Selected {
+			selected = " selected"
+		}
+		html = fmt.Sprintf("%s<option value='%s'%s>%s</option>", html, value, selected, name)
+	}
+	return template.HTML(fmt.Sprintf("<select>%s</select>", html))
+}
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	funcMap := template.FuncMap{
-		"select": func(sel *WCDHtmlSelect) template.HTML {
-			html := ""
-			for value, name := range sel.Options {
-				var selected string
-				if value == sel.Selected {
-					selected = " selected"
-				}
-
-				html = fmt.Sprintf("%s<option value='%s'%s>%s</option>", html, value, selected, name)
-			}
-			return template.HTML(fmt.Sprintf("<select>%s</select>", html))
-		},
+		"select": getSelectTemplateHtml,
 	}
-
-	selectFileType := &WCDHtmlSelect{Options: map[string]string{"csv": "CSV", "tsv": "TSV"}, Selected: "csv"}
-	selectLfCode := &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: "lf"}
-	v := &WCDView{Title: "CSV/TSV形式編集ツール（Web版）", SelectFileType: selectFileType, SelectLfCode: selectLfCode, DataView: ""}
+	v := &WCDView{
+		Title:          "CSV/TSV形式編集ツール（Web版）",
+		SelectFileType: &WCDHtmlSelect{Options: map[string]string{"csv": "CSV", "tsv": "TSV"}, Selected: "csv"},
+		SelectLfCode:   &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: "lf"},
+		DataView:       "",
+	}
 	t := template.Must(template.New(v.Title).Funcs(funcMap).ParseFiles("template/index.html"))
 	err := t.ExecuteTemplate(w, "base", v)
 	if err != nil {
