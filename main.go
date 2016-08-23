@@ -42,7 +42,6 @@ func getFormValue(r *http.Request, key string, dValue string) string {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	fileType := getFormValue(r, "fileType", "csv")
 	lfCode := getFormValue(r, "lfCode", "lf")
-
 	funcMap := template.FuncMap{
 		"select": getSelectTemplateHtml,
 	}
@@ -52,6 +51,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		SelectFileType: &WCDHtmlSelect{Options: map[string]string{"csv": "CSV", "tsv": "TSV"}, Selected: fileType, Name: "fileType"},
 		SelectLfCode:   &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: lfCode, Name: "lfCode"},
 		DataView:       "",
+	}
+
+	if r.Method == "POST" {
+		file, handler, _ := r.FormFile("uploadFile")
+		defer file.Close()
+		v.DataView = handler.Filename
 	}
 
 	t := template.Must(template.New(v.Title).Funcs(funcMap).ParseFiles("template/index.html"))
