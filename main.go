@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"html/template"
+	"io"
+	"log"
 	"net/http"
 )
 
@@ -17,6 +20,8 @@ type WCDView struct {
 	SelectFileType *WCDHtmlSelect
 	SelectLfCode   *WCDHtmlSelect
 	DataView       string
+	CsvData        [][]string
+	FileName       string
 }
 
 func getSelectTemplateHtml(sel *WCDHtmlSelect) template.HTML {
@@ -51,12 +56,26 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		SelectFileType: &WCDHtmlSelect{Options: map[string]string{"csv": "CSV", "tsv": "TSV"}, Selected: fileType, Name: "fileType"},
 		SelectLfCode:   &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: lfCode, Name: "lfCode"},
 		DataView:       "",
+		FileName:       "",
 	}
 
 	if r.Method == "POST" {
 		file, handler, _ := r.FormFile("uploadFile")
 		defer file.Close()
+		reader := csv.NewReader(file)
+		for {
+			record, err := reader.Read()
+			if err == io.EOF {
+				break
+			} else if err != nil {
+				log.Fatal("Error : ", err)
+			}
+
+			v.CsvData = append(v.CsvData, record)
+		}
+		v.FileName = handler.Filename
 		v.DataView = handler.Filename
+		log.Printf("%v", v.CsvData)
 	}
 
 	t := template.Must(template.New(v.Title).Funcs(funcMap).ParseFiles("template/index.html"))
