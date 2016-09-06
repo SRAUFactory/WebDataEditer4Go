@@ -24,6 +24,9 @@ type WCDView struct {
 	FileName       string
 }
 
+/**
+ * html Helper
+ */
 func getSelectTemplateHtml(sel *WCDHtmlSelect) template.HTML {
 	html := ""
 	for value, name := range sel.Options {
@@ -36,6 +39,17 @@ func getSelectTemplateHtml(sel *WCDHtmlSelect) template.HTML {
 	return template.HTML(fmt.Sprintf("<select name='%s'>%s</select>", sel.Name, html))
 }
 
+func getAddButtonTemplateHtml(row int, col int) template.HTML {
+	return template.HTML(fmt.Sprintf("<input type='submit' name='add[%d][%d]' value='+'>", row, col))
+}
+
+func getInputTextTemplateHtml(row int, col int, value string) template.HTML {
+	return template.HTML(fmt.Sprintf("<input type='text' name='data[%d][%d]' value='%s'>", row, col, value))
+}
+
+/**
+ * http.Request Helper
+ */
 func getFormValue(r *http.Request, key string, dValue string) string {
 	value := r.FormValue(key)
 	if value == "" {
@@ -44,6 +58,9 @@ func getFormValue(r *http.Request, key string, dValue string) string {
 	return value
 }
 
+/**
+ * request Handler
+ */
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	fileType := getFormValue(r, "fileType", "csv")
 	lfCode := getFormValue(r, "lfCode", "lf")
