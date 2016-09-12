@@ -1,31 +1,31 @@
 {{define "base"}}<!DOCTYPE html>
 <html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="description" content="">
-<title>{{.Title}}</title>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, post-check=0, pre-check=0">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="Thu, 01 Dec 1994 16:00:00 GMT">
-</head>
-<body>
-<h1>{{.Title}}</h1>
-<h2>編集対象のCSV/TSVファイルを読み込んでください</h2>
-<form action="/" method="post" enctype="multipart/form-data">
-ファイル形式：{{select .SelectFileType}}<br>
-改行コード：{{select .SelectLfCode}}<br>
-<input type="file" name="uploadFile" onchange="document.forms[0].submit()">
-<input type="submit" name="download" value="保存">
-{{if .FileName}}
-<input type="hidden" name="fileName" value="{{.FileName}}">
-<h2>{{.FileName}}の内容</h2>
-<table>
-<tr>
-<td></td>
-<td></td>
-</tr>
-</table>
-{{end}}
-</form>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="">
+		<title>{{.Title}}</title>
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, post-check=0, pre-check=0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Expires" content="Thu, 01 Dec 1994 16:00:00 GMT">
+	</head>
+	<body>
+		<h1>{{.Title}}</h1>
+		<h2>編集対象のCSV/TSVファイルを読み込んでください</h2>
+		<form action="/" method="post" enctype="multipart/form-data">
+			ファイル形式：{{select .SelectFileType}}<br>
+			改行コード：{{select .SelectLfCode}}<br>
+			<input type="file" name="uploadFile" onchange="document.forms[0].submit()">
+			<input type="submit" name="download" value="保存">
+			{{if .FileName}}
+			<input type="hidden" name="fileName" value="{{.FileName}}">
+			<h2>{{.FileName}}の内容</h2>
+			<table>
+				<tr>
+					<td></td>
+					<td></td>
+				</tr>
+			</table>
+			{{end}}
+		</form>
+	</body>
 </html>{{end}}
