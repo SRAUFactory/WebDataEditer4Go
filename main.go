@@ -72,8 +72,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		Title:          "CSV/TSV形式編集ツール（Web版）",
 		SelectFileType: &WCDHtmlSelect{Options: map[string]string{"csv": "CSV", "tsv": "TSV"}, Selected: fileType, Name: "fileType"},
 		SelectLfCode:   &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: lfCode, Name: "lfCode"},
-		DataView:       "",
-		FileName:       "",
 	}
 
 	if r.Method == "POST" {
@@ -91,7 +89,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			v.CsvData = append(v.CsvData, record)
 		}
 		v.FileName = handler.Filename
-		v.DataView = handler.Filename
 		log.Printf("%v", v.CsvData)
 	}
 
