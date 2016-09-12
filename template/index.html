@@ -23,7 +23,20 @@
 				<tr>
 					<td></td>
 					<td></td>
+					{{$header := index .CsvData 0}}
+					{{range $col, $var := $header}}
+					<td>{{addButton 0 $col}}</td>
+					{{end}}
 				</tr>
+				{{range $row, $rowValues := .CsvData}}
+				<tr>
+					<td>{{addButton $row 0}}</td>
+					<td>{{$row}}</td>
+					{{range $col, $value := $rowValues}}
+					<td>{{inputText $row $col $value}}</td>
+					{{end}}
+				</tr>
+				{{end}}
 			</table>
 			{{end}}
 		</form>

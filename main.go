@@ -65,7 +65,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	fileType := getFormValue(r, "fileType", "csv")
 	lfCode := getFormValue(r, "lfCode", "lf")
 	funcMap := template.FuncMap{
-		"select": getSelectTemplateHtml,
+		"select":    getSelectTemplateHtml,
+		"addButton": getAddButtonTemplateHtml,
+		"inputText": getInputTextTemplateHtml,
 	}
 
 	v := &WCDView{
