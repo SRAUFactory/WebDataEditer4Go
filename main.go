@@ -43,7 +43,7 @@ func getAddButtonTemplateHtml(row int, col int) template.HTML {
 }
 
 func getInputTextTemplateHtml(row int, col int, value string) template.HTML {
-	return template.HTML(fmt.Sprintf("<input type='text' name='data[%d][%d]' value='%s'>", row, col, value))
+	return template.HTML(fmt.Sprintf("<input type='text' name='data[%d][]' value='%s'>", row /*col,*/, value))
 }
 
 /**
@@ -92,6 +92,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			v.CsvData = append(v.CsvData, record)
 		}
 		v.FileName = handler.Filename
+	} else if r.Method == "POST" {
+		for k, v := range r.Form {
+			log.Printf("key : %s, value : %s", k, v)
+		}
 	}
 
 	t := template.Must(template.New(v.Title).Funcs(funcMap).ParseFiles("template/index.html"))
