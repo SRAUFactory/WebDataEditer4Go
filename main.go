@@ -76,8 +76,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		SelectLfCode:   &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: lfCode, Name: "lfCode"},
 	}
 
-	if r.Method == "POST" {
-		file, handler, _ := r.FormFile("uploadFile")
+	file, handler, _ := r.FormFile("uploadFile")
+	if file != nil {
 		defer file.Close()
 		reader := csv.NewReader(file)
 		for {
