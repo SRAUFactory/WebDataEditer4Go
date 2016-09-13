@@ -19,7 +19,6 @@ type WCDView struct {
 	Title          string
 	SelectFileType *WCDHtmlSelect
 	SelectLfCode   *WCDHtmlSelect
-	DataView       string
 	CsvData        [][]string
 	FileName       string
 }
@@ -64,6 +63,7 @@ func getFormValue(r *http.Request, key string, dValue string) string {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	fileType := getFormValue(r, "fileType", "csv")
 	lfCode := getFormValue(r, "lfCode", "lf")
+	fileName := getFormValue(r, "fileName", "")
 	funcMap := template.FuncMap{
 		"select":    getSelectTemplateHtml,
 		"addButton": getAddButtonTemplateHtml,
@@ -74,6 +74,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		Title:          "CSV/TSV形式編集ツール（Web版）",
 		SelectFileType: &WCDHtmlSelect{Options: map[string]string{"csv": "CSV", "tsv": "TSV"}, Selected: fileType, Name: "fileType"},
 		SelectLfCode:   &WCDHtmlSelect{Options: map[string]string{"crlf": "CR+LF", "lf": "LF", "cr": "CR"}, Selected: lfCode, Name: "lfCode"},
+		FileName:       fileName,
 	}
 
 	file, handler, _ := r.FormFile("uploadFile")
@@ -91,7 +92,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			v.CsvData = append(v.CsvData, record)
 		}
 		v.FileName = handler.Filename
-		log.Printf("%v", v.CsvData)
 	}
 
 	t := template.Must(template.New(v.Title).Funcs(funcMap).ParseFiles("template/index.html"))

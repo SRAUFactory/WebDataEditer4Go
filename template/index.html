@@ -16,7 +16,7 @@
 			改行コード：{{select .SelectLfCode}}<br>
 			<input type="file" name="uploadFile" onchange="document.forms[0].submit()">
 			<input type="submit" name="download" value="保存">
-			{{if .FileName}}
+			{{if .CsvData}}
 			<input type="hidden" name="fileName" value="{{.FileName}}">
 			<h2>{{.FileName}}の内容</h2>
 			<table>
