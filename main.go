@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 type WCDHtmlSelect struct {
@@ -47,6 +48,18 @@ func getInputTextTemplateHtml(row int, col int, value string) template.HTML {
 }
 
 /**
+ * テンプレートの事前パース
+ */
+var (
+	funcMap = template.FuncMap{
+		"select":    getSelectTemplateHtml,
+		"addButton": getAddButtonTemplateHtml,
+		"inputText": getInputTextTemplateHtml,
+	}
+	tmpl = template.Must(template.New("base").Funcs(funcMap).ParseFiles("template/index.html"))
+)
+
+/**
  * http.Request Helper
  */
 func getFormValue(r *http.Request, key string, dValue string) string {
@@ -64,11 +77,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	fileType := getFormValue(r, "fileType", "csv")
 	lfCode := getFormValue(r, "lfCode", "lf")
 	fileName := getFormValue(r, "fileName", "")
-	funcMap := template.FuncMap{
-		"select":    getSelectTemplateHtml,
-		"addButton": getAddButtonTemplateHtml,
-		"inputText": getInputTextTemplateHtml,
-	}
 
 	v := &WCDView{
 		Title:          "CSV/TSV形式編集ツール（Web版）",
@@ -86,7 +94,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				log.Fatal("Error : ", err)
+				// サーバーを終了させないよう修正
+				log.Printf("CSV Read Error: %v", err)
+				http.Error(w, "CSVの解析に失敗しました: "+err.Error(), http.StatusBadRequest)
+				return
 			}
 
 			v.CsvData = append(v.CsvData, record)
@@ -98,14 +109,23 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t := template.Must(template.New(v.Title).Funcs(funcMap).ParseFiles("template/index.html"))
-	err := t.ExecuteTemplate(w, "base", v)
+	err := tmpl.ExecuteTemplate(w, "base", v)
 	if err != nil {
-		panic(err)
+		log.Printf("Template Render Error: %v", err)
+		http.Error(w, "レンダリングエラーが発生しました", http.StatusInternalServerError)
 	}
 }
 
 func main() {
 	http.HandleFunc("/", indexHandler)
-	http.ListenAndServe(":8080", nil)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Starting CSV Editor on port %s...", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal(err)
+	}
 }
